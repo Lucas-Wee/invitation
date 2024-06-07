@@ -8,14 +8,15 @@
     <div :class="['popup', showPopup ? 'popup-active' : '']">
       <div class="popup-content">
         <p>Do you accept this invitation?</p>
-        <img src="@/assets/gif1.gif" alt="Invitation Animation" />
-        <button @click="closePopup">Yes</button>
-        <button @click="closePopup">No</button>
+        <img :src="currentGif" alt="Invitation Animation" />
+        <button @click="closePopup(true)">Yes</button>
+        <button @click="closePopup(false)">No</button>
       </div>
     </div>
 
     <div>
-  <button @click="toggleMusic" class="top-left-button">Pause/Unpause Music</button>
+  <button @click="toggleMusic" class="top-left-button">{{ musicPlaying ? 'Pause Music' : 'Unpause Music' }}</button>
+
 </div>
 
     <video autoplay loop muted class="video-background">
@@ -24,7 +25,7 @@
     </video>
     <div class="content">
       <div class="invitation">
-        <h1 class="fancy-font" @mouseenter="triggerConfetti">Niki</h1>
+        <h1 class="fancy-font" @mouseenter="triggerConfetti">Cheyyy</h1>
         <h1 class="fancy-font" @mouseenter="triggerSparkles">YOU ARE INVITED!</h1>
 <div class="info-container">
           <div>
@@ -51,29 +52,47 @@ export default {
   components: {
     CountdownTimer
   },
-  data() {
-    return {
-      showPopup: true,
-      location: "Location: Tanjong Pagar MRT",
-      datetime: "Date: 7 June 2024 (Fri), 7pm",
-      targetDate: new Date('2024-06-07T19:00:00')
-    };
-  },
+data() {
+  return {
+    showPopup: true,
+    location: "Location: Mcdonalds (somewhere)",
+    datetime: "Date: 14 June 2024 (Fri), 7pm",
+    targetDate: new Date('2024-06-14T19:00:00'),
+    musicPlaying: true, // Tracks if music is playing
+    currentGif: require('@/assets/gif1.gif'), // Tracks the current GIF displayed
+  };
+},
+
+
   methods: {
 
-        toggleMusic() {
-      if (this.audio.paused) {
-        this.audio.play();
-        this.musicPlaying = true;
-      } else {
-        this.audio.pause();
-        this.musicPlaying = false;
-      }
-  },
+toggleMusic() {
+  if (this.audio.paused) {
+    this.audio.play();
+    this.musicPlaying = true;
+  } else {
+    this.audio.pause();
+    this.musicPlaying = false;
+  }
+},
 
-    closePopup() {
-      this.showPopup = false;
-    },
+closePopup(accepted) {
+  if (accepted) {
+    this.showPopup = false;
+  } else {
+    // Dynamically update the GIF path with require for reactivity
+    this.currentGif = require('@/assets/gif4.gif');
+    this.showPopup = false;
+    setTimeout(() => {
+      this.showPopup = true;
+      // Optionally reset to the original GIF after re-opening
+      this.currentGif = require('@/assets/gif4.gif');
+    }, 300); // Re-open after a short delay
+  }
+},
+
+
+
 
         triggerConfetti() {
       const confettiSettings = {
